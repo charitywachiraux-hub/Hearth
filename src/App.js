@@ -1,35 +1,23 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 const BG_IMAGE =
   "https://images.unsplash.com/photo-1542224566-6e85f2e6772f?fm=jpg&q=80&w=1080&auto=format&fit=crop";
 
 const categories = {
-  security: {
-    label: "Security",
-    color: "rgba(255,100,100,1)",
-    border: "rgba(255,100,100,0.7)",
-  },
-  health: {
-    label: "Health",
-    color: "rgba(255,180,80,1)",
-    border: "rgba(255,180,80,0.7)",
-  },
+  security: { label: "Security", color: "#FF453A", bg: "rgba(255,69,58,0.2)" },
+  health: { label: "Health", color: "#FF9F0A", bg: "rgba(255,159,10,0.2)" },
   behaviour: {
     label: "Behaviour",
-    color: "rgba(255,210,80,1)",
-    border: "rgba(255,210,80,0.7)",
+    color: "#FFD60A",
+    bg: "rgba(255,214,10,0.18)",
   },
   analytics: {
     label: "Analytics",
-    color: "rgba(130,195,255,1)",
-    border: "rgba(130,195,255,0.7)",
+    color: "#64D2FF",
+    bg: "rgba(100,210,255,0.18)",
   },
-  system: {
-    label: "System",
-    color: "rgba(100,220,150,1)",
-    border: "rgba(100,220,150,0.7)",
-  },
+  system: { label: "System", color: "#30D158", bg: "rgba(48,209,88,0.2)" },
 };
 
 const devices = [
@@ -237,33 +225,33 @@ const suggestedQuestions = [
 const previewDevices = devices.slice(0, 4);
 
 const statusColors = {
-  allowed: "rgba(100,220,150,1)",
-  blocked: "rgba(255,100,100,1)",
-  pending: "rgba(255,180,80,1)",
+  allowed: "#30D158",
+  blocked: "#FF453A",
+  pending: "#FF9F0A",
 };
 
 // Zone states for the indicator
 const zoneStates = {
   safe: {
-    label: "Safe zone — no threats detected",
-    dot: "#4ADE80",
-    dotShadow: "rgba(74,222,128,0.9)",
-    bg: "rgba(74,222,128,0.12)",
-    border: "rgba(74,222,128,0.35)",
+    label: "Safe zone, no threats detected",
+    dot: "#30D158",
+    dotShadow: "rgba(48,209,88,0.9)",
+    bg: "rgba(48,209,88,0.12)",
+    border: "rgba(48,209,88,0.35)",
     devices: [],
   },
   caution: {
-    label: "Caution — unusual activity detected",
-    dot: "#FBBF24",
-    dotShadow: "rgba(251,191,36,0.9)",
-    bg: "rgba(251,191,36,0.12)",
-    border: "rgba(251,191,36,0.35)",
+    label: "Caution, unusual activity detected",
+    dot: "#FF9F0A",
+    dotShadow: "rgba(255,159,10,0.9)",
+    bg: "rgba(255,159,10,0.12)",
+    border: "rgba(255,159,10,0.35)",
     panelTitle: "Devices sending excess data",
-    panelTitleColor: "#FBBF24",
-    panelBg: "rgba(251,191,36,0.1)",
-    panelBorder: "rgba(251,191,36,0.35)",
-    descColor: "rgba(251,191,36,0.9)",
-    btnBg: "rgba(251,191,36,0.8)",
+    panelTitleColor: "#FF9F0A",
+    panelBg: "rgba(255,159,10,0.1)",
+    panelBorder: "rgba(255,159,10,0.35)",
+    descColor: "rgba(255,159,10,0.9)",
+    btnBg: "rgba(255,159,10,0.8)",
     btnLabel: "Limit data",
     devices: [
       {
@@ -279,17 +267,17 @@ const zoneStates = {
     ],
   },
   risk: {
-    label: "Risk — devices may be compromised",
-    dot: "#EF4444",
-    dotShadow: "rgba(239,68,68,0.9)",
-    bg: "rgba(239,68,68,0.12)",
-    border: "rgba(239,68,68,0.4)",
+    label: "Risk, devices may be compromised",
+    dot: "#FF453A",
+    dotShadow: "rgba(255,69,58,0.9)",
+    bg: "rgba(255,69,58,0.12)",
+    border: "rgba(255,69,58,0.4)",
     panelTitle: "Suspicious devices detected",
-    panelTitleColor: "#EF4444",
-    panelBg: "rgba(239,68,68,0.1)",
-    panelBorder: "rgba(239,68,68,0.4)",
-    descColor: "rgba(255,100,100,0.9)",
-    btnBg: "rgba(239,68,68,0.85)",
+    panelTitleColor: "#FF453A",
+    panelBg: "rgba(255,69,58,0.1)",
+    panelBorder: "rgba(255,69,58,0.4)",
+    descColor: "rgba(255,69,58,0.95)",
+    btnBg: "rgba(255,69,58,0.85)",
     btnLabel: "Shut down",
     devices: [
       {
@@ -306,13 +294,59 @@ const zoneStates = {
   },
 };
 
+function StatusBar() {
+  return (
+    <div className="status-bar" aria-hidden="true">
+      <span className="status-time">9:41</span>
+      <span></span>
+      <div className="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor">
+          <rect x="0" y="8" width="3" height="4" rx="1" />
+          <rect x="5" y="5.5" width="3" height="6.5" rx="1" />
+          <rect x="10" y="3" width="3" height="9" rx="1" />
+          <rect x="15" y="0" width="3" height="12" rx="1" />
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+          <path d="M8 2.4c2.3 0 4.4.9 6 2.4l1.1-1.1A9.9 9.9 0 0 0 8 .8 9.9 9.9 0 0 0 .9 3.7L2 4.8a8.4 8.4 0 0 1 6-2.4Z" />
+          <path d="M8 5.6c1.4 0 2.7.5 3.7 1.4l1.1-1.1A7 7 0 0 0 8 4a7 7 0 0 0-4.8 1.9L4.3 7A5.4 5.4 0 0 1 8 5.6Z" />
+          <path d="M8 8.8c.6 0 1.2.2 1.6.6L8 11l-1.6-1.6c.4-.4 1-.6 1.6-.6Z" />
+        </svg>
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
+          <rect
+            x="0.5"
+            y="0.5"
+            width="22"
+            height="12"
+            rx="3.8"
+            stroke="currentColor"
+            strokeOpacity="0.4"
+          />
+          <rect
+            x="2"
+            y="2"
+            width="19"
+            height="9"
+            rx="2.5"
+            fill="currentColor"
+          />
+          <path
+            d="M24.5 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z"
+            fill="currentColor"
+            fillOpacity="0.4"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 function CategoryTag({ category }) {
   const cat = categories[category];
   if (!cat) return null;
   return (
     <span
       className="category-tag"
-      style={{ color: cat.color, borderColor: cat.border }}
+      style={{ color: cat.color, background: cat.bg }}
     >
       {cat.label}
     </span>
@@ -339,7 +373,7 @@ function StatusDot({ status }) {
       ></div>
       <p
         style={{
-          fontSize: "10px",
+          fontSize: "12px",
           color: statusColors[status],
           fontWeight: 600,
           margin: 0,
@@ -720,10 +754,8 @@ Recent audit history: ${auditItems
               <i className="ti ti-robot" aria-hidden="true"></i>
             </div>
             <div className="bubble-assistant message-bubble">
-              <p
-                style={{ fontStyle: "italic", color: "rgba(255,255,255,0.6)" }}
-              >
-                Hearth AI is thinking...
+              <p style={{ color: "rgba(235,235,245,0.6)" }}>
+                Hearth AI is thinking…
               </p>
             </div>
           </div>
@@ -739,7 +771,7 @@ Recent audit history: ${auditItems
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <button className="agent-send-btn" onClick={() => sendMessage()}>
-          <i className="ti ti-send" aria-hidden="true"></i>
+          <i className="ti ti-arrow-up" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -769,6 +801,12 @@ function App() {
   });
   const [currentZone, setCurrentZone] = useState("safe");
   const [zoneActionMsg, setZoneActionMsg] = useState(null);
+  const contentRef = useRef(null);
+
+  // Each tab opens at the top, like a native iOS tab switch
+  useEffect(() => {
+    if (contentRef.current) contentRef.current.scrollTop = 0;
+  }, [currentScreen, guidedMode]);
 
   function toggleSection(s) {
     setExpandedSection(expandedSection === s ? null : s);
@@ -815,7 +853,7 @@ function App() {
       setTimeout(() => {
         setCurrentZone("safe");
         setActedDevices([]);
-        setZoneActionMsg("All threats resolved — zone is now safe");
+        setZoneActionMsg("All threats resolved, zone is now safe");
         setTimeout(() => setZoneActionMsg(null), 3000);
       }, 600);
     } else {
@@ -859,57 +897,22 @@ function App() {
           />
 
           {zoneActionMsg && (
-            <div
-              style={{
-                background: "rgba(100,220,150,0.15)",
-                border: "0.5px solid rgba(100,220,150,0.4)",
-                borderRadius: "10px",
-                padding: "8px 12px",
-                marginBottom: "10px",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "11px",
-                  color: "rgba(100,220,150,1)",
-                  margin: 0,
-                }}
-              >
-                <i
-                  className="ti ti-circle-check"
-                  style={{ marginRight: "5px" }}
-                  aria-hidden="true"
-                ></i>
-                {zoneActionMsg}
-              </p>
+            <div className="toast">
+              <i className="ti ti-circle-check" aria-hidden="true"></i>
+              <span>{zoneActionMsg}</span>
             </div>
           )}
 
           {/* Zone demo toggle -- for presentation purposes */}
-          <div style={{ display: "flex", gap: "4px", marginBottom: "10px" }}>
+          <div className="segmented">
             {["safe", "caution", "risk"].map((z) => (
               <button
                 key={z}
+                className={`segmented-btn ${currentZone === z ? "active" : ""}`}
                 onClick={() => {
                   setCurrentZone(z);
                   setActedDevices([]);
                   setZoneActionMsg(null);
-                }}
-                style={{
-                  flex: 1,
-                  padding: "5px 4px",
-                  borderRadius: "8px",
-                  border: "0.5px solid rgba(255,255,255,0.2)",
-                  background:
-                    currentZone === z
-                      ? "rgba(255,255,255,0.22)"
-                      : "rgba(255,255,255,0.08)",
-                  color: currentZone === z ? "#fff" : "rgba(255,255,255,0.55)",
-                  fontSize: "9px",
-                  fontWeight: currentZone === z ? 600 : 400,
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  textTransform: "capitalize",
                 }}
               >
                 {z}
@@ -987,7 +990,7 @@ function App() {
               </div>
               <i
                 className="ti ti-chevron-right"
-                style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}
+                style={{ color: "rgba(235,235,245,0.3)", fontSize: "18px" }}
                 aria-hidden="true"
               ></i>
             </div>
@@ -1061,11 +1064,14 @@ function App() {
                 onClick={() => setGuidedMode(true)}
                 style={{
                   width: "100%",
-                  background: "rgba(255,255,255,0.18)",
-                  border: "0.5px solid rgba(255,255,255,0.3)",
-                  borderRadius: "20px",
+                  background: "rgba(28,28,30,0.62)",
+                  backdropFilter: "blur(24px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                  border: "0.5px solid rgba(255,255,255,0.12)",
+                  borderRadius: "22px",
                   padding: "16px",
                   marginBottom: "12px",
+                  color: "#fff",
                   cursor: "pointer",
                   textAlign: "left",
                   fontFamily: "inherit",
@@ -1080,8 +1086,8 @@ function App() {
                   }}
                 >
                   <i
-                    className="ti ti-robot"
-                    style={{ fontSize: "18px", color: "#fff" }}
+                    className="ti ti-sparkles"
+                    style={{ fontSize: "20px", color: "#0A84FF" }}
                     aria-hidden="true"
                   ></i>
                   <p className="white-text-bold" style={{ margin: 0 }}>
@@ -1120,8 +1126,8 @@ function App() {
               <i
                 className="ti ti-circle-check"
                 style={{
-                  fontSize: "36px",
-                  color: "rgba(100,220,150,1)",
+                  fontSize: "44px",
+                  color: "#30D158",
                   marginBottom: "8px",
                   display: "block",
                 }}
@@ -1226,7 +1232,11 @@ function App() {
   return (
     <div className="phone-frame">
       <div className="app" style={{ backgroundImage: `url(${BG_IMAGE})` }}>
-        <div className="content">{renderScreen()}</div>
+        <StatusBar />
+        <div className="dynamic-island" aria-hidden="true"></div>
+        <div className="content" ref={contentRef}>
+          {renderScreen()}
+        </div>
 
         {selectedActivity && (
           <div
@@ -1239,7 +1249,7 @@ function App() {
             >
               <p
                 className="white-text-bold"
-                style={{ fontSize: "16px", marginBottom: "4px" }}
+                style={{ fontSize: "20px", marginBottom: "4px" }}
               >
                 {selectedActivity.device}
               </p>
@@ -1269,7 +1279,7 @@ function App() {
                 {selectedActivity.description}
               </p>
               <button
-                className="glass-btn-primary full-width"
+                className="glass-btn-neutral full-width"
                 onClick={() => setSelectedActivity(null)}
               >
                 Close
@@ -1324,8 +1334,8 @@ function App() {
               <div
                 style={{
                   height: "0.5px",
-                  background: "rgba(255,255,255,0.15)",
-                  marginBottom: "14px",
+                  background: "rgba(84,84,88,0.65)",
+                  marginBottom: "16px",
                 }}
               ></div>
               <div className="guided-info-block">
@@ -1358,8 +1368,8 @@ function App() {
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <i
-                    className="ti ti-robot"
-                    style={{ fontSize: "14px", color: "#fff" }}
+                    className="ti ti-sparkles"
+                    style={{ fontSize: "18px", color: "#0A84FF" }}
                     aria-hidden="true"
                   ></i>
                   <p className="white-text-bold small">
@@ -1368,8 +1378,8 @@ function App() {
                   <i
                     className="ti ti-chevron-right"
                     style={{
-                      color: "rgba(255,255,255,0.5)",
-                      fontSize: "13px",
+                      color: "rgba(235,235,245,0.3)",
+                      fontSize: "18px",
                       marginLeft: "auto",
                     }}
                     aria-hidden="true"
@@ -1377,7 +1387,7 @@ function App() {
                 </div>
               </GlassCard>
               <button
-                className="glass-btn-primary full-width"
+                className="glass-btn-neutral full-width"
                 onClick={() => setSelectedAuditItem(null)}
               >
                 Close
@@ -1400,13 +1410,13 @@ function App() {
                   marginBottom: "16px",
                 }}
               >
-                <p className="white-text-bold" style={{ fontSize: "16px" }}>
+                <p className="white-text-bold" style={{ fontSize: "20px" }}>
                   Connected devices
                 </p>
                 <p
                   style={{
-                    fontSize: "12px",
-                    color: "rgba(100,220,150,1)",
+                    fontSize: "13px",
+                    color: "#30D158",
                     fontWeight: 600,
                   }}
                 >
@@ -1423,7 +1433,7 @@ function App() {
                     padding: "8px 0",
                     borderBottom:
                       index < devices.length - 1
-                        ? "0.5px solid rgba(255,255,255,0.12)"
+                        ? "0.5px solid rgba(84,84,88,0.65)"
                         : "none",
                   }}
                 >
@@ -1438,14 +1448,14 @@ function App() {
                       width: "7px",
                       height: "7px",
                       borderRadius: "50%",
-                      background: "#4ADE80",
-                      boxShadow: "0 0 6px rgba(74,222,128,0.8)",
+                      background: "#30D158",
+                      boxShadow: "0 0 6px rgba(48,209,88,0.8)",
                     }}
                   ></div>
                 </div>
               ))}
               <button
-                className="glass-btn-primary full-width"
+                className="glass-btn-neutral full-width"
                 style={{ marginTop: "16px" }}
                 onClick={() => setShowDevices(false)}
               >
@@ -1459,23 +1469,34 @@ function App() {
           <div className="drawer-scrim" onClick={() => setShowSettings(false)}>
             <div className="drawer-glass" onClick={(e) => e.stopPropagation()}>
               <div
+                className="bottom-sheet-handle"
+                style={{ marginTop: "-12px", marginBottom: "12px" }}
+              ></div>
+              <div
                 style={{
-                  display: "flex",
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto 1fr",
                   alignItems: "center",
-                  gap: "12px",
                   marginBottom: "24px",
                 }}
               >
-                <div
-                  className="glass-icon-btn"
-                  style={{ cursor: "pointer" }}
+                <span></span>
+                <p className="white-text-bold">Settings</p>
+                <button
                   onClick={() => setShowSettings(false)}
+                  style={{
+                    justifySelf: "end",
+                    background: "none",
+                    border: "none",
+                    color: "#0A84FF",
+                    fontSize: "17px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    minHeight: "44px",
+                  }}
                 >
-                  <i className="ti ti-x" aria-hidden="true"></i>
-                </div>
-                <p className="white-text-bold" style={{ fontSize: "18px" }}>
-                  Settings
-                </p>
+                  Done
+                </button>
               </div>
               {[
                 {
@@ -1504,10 +1525,7 @@ function App() {
                     >
                       <i
                         className={`ti ${section.icon}`}
-                        style={{
-                          fontSize: "16px",
-                          color: "rgba(255,255,255,0.8)",
-                        }}
+                        style={{ fontSize: "20px", color: "#0A84FF" }}
                         aria-hidden="true"
                       ></i>
                       <p className="white-text-bold small">{section.label}</p>
@@ -1515,8 +1533,8 @@ function App() {
                     <i
                       className={`ti ${expandedSection === section.key ? "ti-chevron-up" : "ti-chevron-down"}`}
                       style={{
-                        fontSize: "14px",
-                        color: "rgba(255,255,255,0.6)",
+                        fontSize: "18px",
+                        color: "rgba(235,235,245,0.3)",
                       }}
                       aria-hidden="true"
                     ></i>
@@ -1534,7 +1552,7 @@ function App() {
                               padding: "10px 0",
                               borderBottom:
                                 index < devices.length - 1
-                                  ? "0.5px solid rgba(255,255,255,0.1)"
+                                  ? "0.5px solid rgba(84,84,88,0.65)"
                                   : "none",
                             }}
                           >
@@ -1560,10 +1578,10 @@ function App() {
                           <div
                             key={cat.key}
                             style={{
-                              padding: "10px 0",
+                              padding: "12px 0",
                               borderBottom:
                                 index < categoryRules.length - 1
-                                  ? "0.5px solid rgba(255,255,255,0.1)"
+                                  ? "0.5px solid rgba(84,84,88,0.65)"
                                   : "none",
                             }}
                           >
@@ -1580,7 +1598,7 @@ function App() {
                                 {cat.description}
                               </p>
                             </div>
-                            <div style={{ display: "flex", gap: "4px" }}>
+                            <div className="rule-segmented">
                               {["ask", "auto", "block"].map((rule) => (
                                 <button
                                   key={rule}
@@ -1635,6 +1653,7 @@ function App() {
             </button>
           ))}
         </nav>
+        <div className="home-indicator" aria-hidden="true"></div>
       </div>
     </div>
   );
