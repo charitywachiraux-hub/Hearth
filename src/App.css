@@ -1472,7 +1472,7 @@ button, input { font-family: inherit; }
   line-height: 0;
 }
 
-.hearth-buddy svg { overflow: visible; filter: drop-shadow(0 4px 10px rgba(255,122,26,0.28)); }
+.hearth-buddy svg { overflow: visible; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.22)); }
 
 .hearth-buddy .hb-body {
   transform-origin: 60px 64px;
@@ -1531,7 +1531,10 @@ button, input { font-family: inherit; }
   position: absolute;
   inset: 10%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,140,50,0.55), rgba(255,122,26,0) 70%);
+  background:
+    radial-gradient(circle at 35% 40%, rgba(48,209,88,0.45), rgba(48,209,88,0) 60%),
+    radial-gradient(circle at 70% 55%, rgba(255,159,10,0.35), rgba(255,159,10,0) 60%),
+    radial-gradient(circle at 50% 75%, rgba(255,69,58,0.3), rgba(255,69,58,0) 60%);
   filter: blur(28px);
   z-index: 0;
   animation: orb-breathe 3.2s ease-in-out infinite;
@@ -1611,3 +1614,60 @@ button, input { font-family: inherit; }
    edge lines up with the text. */
 .screen-hero { margin-top: 6px; margin-left: -10px; line-height: 0; }
 .screen-hero .hero-buddy { margin-left: 0; }
+
+
+/* ---------- CHARACTER: living glass ----------
+   The three glows inside the pearl cloud drift and breathe slowly, each on
+   its own rhythm, so the colour moves like a gradient sliding through glass. */
+.hearth-buddy .hb-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hearth-buddy .hb-glow-safe { animation: hb-drift-safe 7s ease-in-out infinite alternate; }
+.hearth-buddy .hb-glow-caution { animation: hb-drift-caution 8.5s ease-in-out infinite alternate; }
+.hearth-buddy .hb-glow-risk { animation: hb-drift-risk 10s ease-in-out infinite alternate; }
+
+@keyframes hb-drift-safe {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(14px, 8px) scale(1.15); }
+  100% { transform: translate(6px, 18px) scale(0.95); }
+}
+
+@keyframes hb-drift-caution {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-16px, 12px) scale(0.9); }
+  100% { transform: translate(-8px, -6px) scale(1.12); }
+}
+
+@keyframes hb-drift-risk {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(10px, -14px) scale(1.1); }
+  100% { transform: translate(-12px, -4px) scale(0.92); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hearth-buddy .hb-glow { animation: none; }
+}
+
+/* Circulation: the whole set of glows turns slowly around the cloud's
+   centre while each one drifts on its own, so the colour keeps flowing
+   through the glass. Nothing glows outside the cloud. */
+.hearth-buddy .hb-flow {
+  transform-box: view-box;
+  transform-origin: 62px 64px;
+  animation: hb-circulate 12s linear infinite;
+}
+
+@keyframes hb-circulate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Voice mode: no halo behind the cloud, the colour lives only inside it */
+.voice-orb .voice-orb-glow { display: none; }
+.hearth-buddy svg { filter: drop-shadow(0 6px 14px rgba(0,0,0,0.25)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hearth-buddy .hb-flow { animation: none; }
+}
