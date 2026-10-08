@@ -7,6 +7,7 @@ import {
   hasVoiceConsent,
 } from "./VoiceUI";
 import { warmUpVoices } from "./voice";
+import HearthCharacter from "./HearthCharacter";
 
 // Background: an ambient colour field that reflects the home's privacy zone (see .app.zone-* in App.css)
 
@@ -551,7 +552,7 @@ function GuidedReview({ items, onComplete, onBack }) {
           <i className="ti ti-arrow-left" aria-hidden="true"></i>
         </div>
         <div className="guided-title">
-          <i className="ti ti-robot" aria-hidden="true"></i>
+          <HearthCharacter size={26} state="idle" />
           <p>Hearth guide</p>
         </div>
         <p className="white-text-muted small">
@@ -568,9 +569,7 @@ function GuidedReview({ items, onComplete, onBack }) {
 
       <GlassCard style={{ marginBottom: "12px" }}>
         <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-          <div className="glass-avatar">
-            <i className="ti ti-robot" aria-hidden="true"></i>
-          </div>
+          <HearthCharacter size={32} state="idle" />
           <p className="white-text small" style={{ lineHeight: 1.6 }}>
             {step === 0
               ? `You have ${items.length} pending requests. Let me walk you through each one.`
@@ -754,9 +753,7 @@ Recent audit history: ${auditItems
             className={`message-row ${msg.role === "user" ? "message-user" : "message-assistant"}`}
           >
             {msg.role === "assistant" && (
-              <div className="glass-avatar">
-                <i className="ti ti-robot" aria-hidden="true"></i>
-              </div>
+              <HearthCharacter size={32} state="idle" />
             )}
             <div
               className={`message-bubble ${msg.role === "user" ? "bubble-user" : "bubble-assistant"}`}
@@ -785,9 +782,7 @@ Recent audit history: ${auditItems
         )}
         {loading && (
           <div className="message-row message-assistant">
-            <div className="glass-avatar">
-              <i className="ti ti-robot" aria-hidden="true"></i>
-            </div>
+            <HearthCharacter size={32} state="thinking" />
             <div className="bubble-assistant message-bubble">
               <p style={{ color: "rgba(235,235,245,0.6)" }}>
                 Hearth AI is thinking…
@@ -1047,9 +1042,7 @@ function App() {
             onClick={openAIGeneral}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div className="glass-icon small">
-                <i className="ti ti-robot" aria-hidden="true"></i>
-              </div>
+              <HearthCharacter size={40} state="idle" />
               <div style={{ flex: 1 }}>
                 <p className="white-text-bold small">Ask Hearth AI</p>
                 <p className="white-text-muted tiny">

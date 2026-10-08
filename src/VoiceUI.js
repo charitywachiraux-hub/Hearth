@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import HearthCharacter from "./HearthCharacter";
 import {
   loadTranscriber,
   startRecording,
@@ -260,12 +261,21 @@ export function VoiceMode({ messages, loading, onSend, onClose }) {
         <button
           type="button"
           className={`voice-orb ${phase}`}
-          style={{ "--level": level }}
           onClick={tapOrb}
-          aria-label="Voice orb"
+          aria-label="Talk to Hearth"
         >
-          <span className="voice-orb-core"></span>
           <span className="voice-orb-glow"></span>
+          <HearthCharacter
+            size={180}
+            level={level}
+            state={
+              phase === "transcribing"
+                ? "thinking"
+                : phase === "error"
+                  ? "paused"
+                  : phase
+            }
+          />
         </button>
 
         <p className="voice-status">{status}</p>
