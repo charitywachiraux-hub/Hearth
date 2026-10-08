@@ -1045,3 +1045,118 @@ button, input { font-family: inherit; }
   flex-shrink: 0;
   white-space: nowrap;
 }
+
+/* =========================================================
+   LIQUID GLASS (iOS 26)
+   Apple's rule: Liquid Glass is for the navigation and control
+   layer that floats above content (tab bar, toolbar buttons,
+   segmented controls, chips, the message field). Content cards
+   keep the standard materials so text stays readable.
+   Recipe: clear tint, light blur with boosted saturation and
+   brightness, a specular rim lit from the top left, a soft inner
+   glow and a floating shadow.
+   ========================================================= */
+
+:root {
+  --glass-tint: rgba(255,255,255,0.08);
+  --glass-tint-strong: rgba(255,255,255,0.16);
+  --glass-filter: blur(14px) saturate(190%) brightness(1.08);
+  --glass-rim:
+    inset 1px 1px 0 rgba(255,255,255,0.45),
+    inset -1px -1px 0 rgba(255,255,255,0.12),
+    inset 0 0 16px rgba(255,255,255,0.07);
+  --glass-float: 0 10px 30px rgba(0,0,0,0.28), 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.floating-nav,
+.glass-icon-btn,
+.segmented,
+.rule-segmented,
+.glass-filter-btn,
+.agent-input,
+.zone-indicator {
+  background: var(--glass-tint);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  border: none;
+  box-shadow: var(--glass-rim), var(--glass-float);
+}
+
+/* Specular sheen across the top half, like light hitting curved glass */
+.floating-nav::before,
+.glass-icon-btn::before,
+.segmented::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0) 60%);
+  pointer-events: none;
+}
+
+.floating-nav-btn,
+.segmented-btn,
+.glass-rule-btn { position: relative; z-index: 1; }
+
+/* Selected tab: a brighter glass droplet inside the bar */
+.floating-nav-active {
+  background: var(--glass-tint-strong);
+  border: none;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.35), inset 0 0 10px rgba(255,255,255,0.08);
+}
+
+/* Selected segment and chip: same droplet treatment */
+.segmented-btn.active,
+.glass-rule-active {
+  background: rgba(255,255,255,0.22);
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.4), 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.glass-filter-active {
+  background: rgba(255,255,255,0.92);
+  color: #000;
+}
+
+/* Inside solid sheets there is nothing behind to refract, so segments sit on a plain fill */
+.drawer-glass .rule-segmented {
+  background: var(--fill-3);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* Tinted glass for the send button */
+.agent-send-btn {
+  background: rgba(10,132,255,0.85);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.45), 0 6px 16px rgba(10,132,255,0.35);
+}
+
+/* Zone pill keeps its colour as a tint on the glass (inline styles set bg) */
+.zone-indicator { box-shadow: var(--glass-rim); }
+
+/* Press feedback: glass compresses slightly */
+.glass-icon-btn:active,
+.floating-nav-btn:active,
+.agent-send-btn:active { transform: scale(0.94); transition: transform 0.12s ease; }
+.glass-icon-btn > * { position: relative; z-index: 1; }
+
+/* Glass controls need a positioning context for the sheen; the tab bar is already absolute */
+.glass-icon-btn, .segmented, .rule-segmented, .glass-filter-btn, .agent-input, .zone-indicator { position: relative; }
+
+/* Tab bar: thicker frost so content passing underneath never competes with the labels */
+.floating-nav {
+  background: rgba(40,40,44,0.35);
+  backdrop-filter: blur(22px) saturate(190%) brightness(1.05);
+  -webkit-backdrop-filter: blur(22px) saturate(190%) brightness(1.05);
+}
+
+/* iOS 26 scroll edge effect at both ends: content fades under the status bar and the tab bar */
+.content {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 28px, #000 64px, #000 calc(100% - 120px), rgba(0,0,0,0.25) calc(100% - 40px));
+  mask-image: linear-gradient(to bottom, transparent 28px, #000 64px, #000 calc(100% - 120px), rgba(0,0,0,0.25) calc(100% - 40px));
+}
+
+/* The phone never scrolls sideways */
+.app, .content { overflow-x: hidden; }
