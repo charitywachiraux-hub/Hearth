@@ -1154,9 +1154,41 @@ button, input { font-family: inherit; }
 
 /* iOS 26 scroll edge effect at both ends: content fades under the status bar and the tab bar */
 .content {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 28px, #000 64px, #000 calc(100% - 120px), rgba(0,0,0,0.25) calc(100% - 40px));
-  mask-image: linear-gradient(to bottom, transparent 28px, #000 64px, #000 calc(100% - 120px), rgba(0,0,0,0.25) calc(100% - 40px));
+  -webkit-mask-image: linear-gradient(to bottom, transparent 28px, #000 64px, #000 calc(100% - 100px), rgba(0,0,0,0.25) calc(100% - 40px));
+  mask-image: linear-gradient(to bottom, transparent 28px, #000 64px, #000 calc(100% - 100px), rgba(0,0,0,0.25) calc(100% - 40px));
 }
 
 /* The phone never scrolls sideways */
 .app, .content { overflow-x: hidden; }
+
+/* ---------- SCREEN HEADER (same position on every tab) ---------- */
+.screen-header { margin-bottom: var(--sp-4); }
+
+.screen-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--tap);
+  margin-top: var(--sp-1);
+}
+
+.screen-toolbar-leading,
+.screen-toolbar-trailing { display: flex; align-items: center; gap: var(--sp-2); min-height: var(--tap); }
+
+.screen-greeting {
+  font-size: var(--subheadline);
+  color: var(--label-2);
+}
+
+.screen-header .screen-title { margin: var(--sp-1) 0 0 0; }
+
+.screen-subtitle {
+  font-size: var(--subheadline);
+  line-height: 20px;
+  color: var(--label-2);
+  margin-top: 2px;
+}
+
+/* The agent header uses the same component, so only side padding is needed */
+.agent-header { display: block; padding: 0 var(--margin); }
+.agent-header .screen-header { margin-bottom: var(--sp-3); }

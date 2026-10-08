@@ -294,6 +294,21 @@ const zoneStates = {
   },
 };
 
+// One header for every tab, like an iOS navigation bar with a large title:
+// a 44pt toolbar row (leading and trailing slots), then the title, then a subtitle.
+function ScreenHeader({ title, subtitle, leading, trailing }) {
+  return (
+    <header className="screen-header">
+      <div className="screen-toolbar">
+        <div className="screen-toolbar-leading">{leading}</div>
+        <div className="screen-toolbar-trailing">{trailing}</div>
+      </div>
+      <h1 className="screen-title">{title}</h1>
+      {subtitle && <p className="screen-subtitle">{subtitle}</p>}
+    </header>
+  );
+}
+
 function StatusBar() {
   return (
     <div className="status-bar" aria-hidden="true">
@@ -696,21 +711,21 @@ Recent audit history: ${auditItems
   return (
     <div className="agent-container">
       <div className="agent-header">
-        {onBack && (
-          <div
-            className="glass-icon-btn"
-            onClick={onBack}
-            style={{ cursor: "pointer" }}
-          >
-            <i className="ti ti-arrow-left" aria-hidden="true"></i>
-          </div>
-        )}
-        <div>
-          <h1 className="white-text-bold large">AI Agent</h1>
-          <p className="white-text-muted small">
-            Ask Hearth anything about your home data
-          </p>
-        </div>
+        <ScreenHeader
+          title="AI Agent"
+          subtitle="Ask Hearth anything about your home data"
+          leading={
+            onBack && (
+              <div
+                className="glass-icon-btn"
+                onClick={onBack}
+                style={{ cursor: "pointer" }}
+              >
+                <i className="ti ti-arrow-left" aria-hidden="true"></i>
+              </div>
+            )
+          }
+        />
       </div>
       <div className="agent-messages">
         {messages.map((msg, i) => (
@@ -875,20 +890,19 @@ function App() {
     if (currentScreen === "dashboard") {
       return (
         <div className="screen">
-          <div className="top-bar">
-            <div
-              className="glass-icon-btn"
-              onClick={() => setShowSettings(true)}
-              style={{ cursor: "pointer" }}
-            >
-              <i className="ti ti-settings" aria-hidden="true"></i>
-            </div>
-          </div>
-
-          <div className="greeting-block">
-            <p className="greeting-sub">Good evening</p>
-            <h1 className="greeting-name">Charity</h1>
-          </div>
+          <ScreenHeader
+            title="Charity"
+            leading={<span className="screen-greeting">Good evening</span>}
+            trailing={
+              <div
+                className="glass-icon-btn"
+                onClick={() => setShowSettings(true)}
+                style={{ cursor: "pointer" }}
+              >
+                <i className="ti ti-settings" aria-hidden="true"></i>
+              </div>
+            }
+          />
 
           <ZoneIndicator
             zone={currentZone}
@@ -1050,13 +1064,10 @@ function App() {
       }
       return (
         <div className="screen">
-          <h1 className="screen-title">Review Queue</h1>
-          <p
-            className="white-text-muted small"
-            style={{ marginBottom: "16px" }}
-          >
-            {pendingItems.length} items waiting
-          </p>
+          <ScreenHeader
+            title="Review Queue"
+            subtitle={`${pendingItems.length} items waiting`}
+          />
 
           {pendingItems.length > 0 ? (
             <>
@@ -1166,13 +1177,10 @@ function App() {
     if (currentScreen === "audit") {
       return (
         <div className="screen">
-          <h1 className="screen-title">Audit Trail</h1>
-          <p
-            className="white-text-muted small"
-            style={{ marginBottom: "16px" }}
-          >
-            A complete record of your home data
-          </p>
+          <ScreenHeader
+            title="Audit Trail"
+            subtitle="A complete record of your home data"
+          />
           <div className="audit-filters">
             {["all", "allowed", "blocked", "pending"].map((filter) => (
               <button
