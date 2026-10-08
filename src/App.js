@@ -1,5 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
+import {
+  DictationButton,
+  VoiceMode,
+  VoicePrivacySheet,
+  hasVoiceConsent,
+} from "./VoiceUI";
+import { warmUpVoices } from "./voice";
 
 // Background: an ambient colour field that reflects the home's privacy zone (see .app.zone-* in App.css)
 
@@ -642,6 +649,20 @@ function AIAgent({
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  // Voice (input and output only; the AI request below is unchanged)
+  const [voiceStatus, setVoiceStatus] = useState(null);
+  const [voiceMode, setVoiceMode] = useState(false);
+  const [consentThen, setConsentThen] = useState(null);
+  useEffect(() => warmUpVoices(), []);
+
+  function requestVoiceConsent(next) {
+    setConsentThen(() => next);
+  }
+
+  function openVoiceMode() {
+    if (hasVoiceConsent()) setVoiceMode(true);
+    else requestVoiceConsent(() => setVoiceMode(true));
+  }
 
   async function sendMessage(text) {
     const userMessage = text || input;
@@ -775,19 +796,53 @@ Recent audit history: ${auditItems
           </div>
         )}
       </div>
+      {voiceStatus && <p className="agent-voice-status">{voiceStatus}</p>}
       <div className="agent-input-area">
-        <input
-          className="agent-input"
-          type="text"
-          placeholder="Ask Hearth AI anything..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
-        <button className="agent-send-btn" onClick={() => sendMessage()}>
-          <i className="ti ti-arrow-up" aria-hidden="true"></i>
-        </button>
+        <div className="agent-field">
+          <input
+            className="agent-input"
+            type="text"
+            placeholder="Ask Hearth AI anything..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          />
+          <DictationButton
+            onText={(t) => setInput((prev) => (prev ? `${prev} ${t}` : t))}
+            onStatus={setVoiceStatus}
+            requestConsent={requestVoiceConsent}
+          />
+        </div>
+        {input.trim() ? (
+          <button className="agent-send-btn" onClick={() => sendMessage()} aria-label="Send">
+            <i className="ti ti-arrow-up" aria-hidden="true"></i>
+          </button>
+        ) : (
+          <button className="agent-voice-btn" onClick={openVoiceMode} aria-label="Talk to Hearth">
+            <i className="ti ti-wave-sine" aria-hidden="true"></i>
+          </button>
+        )}
       </div>
+
+      {voiceMode && (
+        <VoiceMode
+          messages={messages}
+          loading={loading}
+          onSend={(text) => sendMessage(text)}
+          onClose={() => setVoiceMode(false)}
+        />
+      )}
+
+      {consentThen && (
+        <VoicePrivacySheet
+          onContinue={() => {
+            const next = consentThen;
+            setConsentThen(null);
+            next();
+          }}
+          onCancel={() => setConsentThen(null)}
+        />
+      )}
     </div>
   );
 }

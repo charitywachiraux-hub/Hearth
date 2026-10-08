@@ -1234,3 +1234,229 @@ button, input { font-family: inherit; }
   --amb-2: rgba(255,159,10,0.22);
   --amb-3: rgba(255,69,58,0.16);
 }
+
+/* ---------- VOICE: message field ---------- */
+.agent-field {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.agent-field .agent-input { width: 100%; padding-right: 44px; }
+
+.agent-mic-btn {
+  position: absolute;
+  right: 3px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--label-2);
+  font-size: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.agent-mic-btn.recording {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 0 0 calc(var(--level, 0) * 10px) rgba(255,69,58,0.35);
+}
+
+.agent-mic-btn.transcribing { color: var(--label); }
+
+.spin { animation: spin 0.9s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Voice mode button sits where Send goes when the field is empty */
+.agent-voice-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--label);
+  color: #000;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.agent-voice-btn:active { transform: scale(0.94); }
+
+.agent-voice-status {
+  font-size: var(--footnote);
+  color: var(--label-2);
+  padding: 0 var(--margin) var(--sp-1);
+}
+
+/* ---------- VOICE: first-use privacy sheet ---------- */
+.voice-sheet-scrim { align-items: flex-end; padding: 0; z-index: 450; }
+
+.voice-sheet { position: relative; z-index: 1; padding-bottom: var(--sp-6); }
+
+.voice-sheet-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--sp-3);
+  border-radius: 50%;
+  background: rgba(10,132,255,0.18);
+  color: var(--blue);
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-sheet-title {
+  font-size: var(--title-3);
+  line-height: 25px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: var(--sp-4);
+}
+
+.voice-sheet-points { display: flex; flex-direction: column; gap: var(--sp-3); margin-bottom: var(--sp-5); }
+
+.voice-sheet-points p {
+  display: flex;
+  gap: var(--sp-3);
+  font-size: var(--subheadline);
+  line-height: 20px;
+  color: var(--label-2);
+}
+
+.voice-sheet-points i { font-size: 20px; color: var(--label); flex-shrink: 0; margin-top: -1px; }
+
+.voice-sheet-primary { background: var(--blue); color: #fff; }
+
+/* ---------- VOICE MODE ---------- */
+.voice-mode {
+  position: absolute;
+  inset: 0;
+  z-index: 420;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(var(--status-h) + var(--sp-4)) var(--sp-6) 48px;
+  background: rgba(0,0,0,0.62);
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  animation: voice-in 0.35s ease;
+}
+
+@keyframes voice-in { from { opacity: 0; } to { opacity: 1; } }
+
+.voice-mode-top { width: 100%; display: flex; justify-content: center; }
+
+.voice-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r-capsule);
+  font-size: var(--footnote);
+  color: var(--label-2);
+  background: var(--glass-tint);
+  box-shadow: var(--glass-rim);
+}
+
+/* The orb: a glowing sphere that breathes, reacts to the voice and pulses while speaking */
+.voice-orb {
+  --level: 0;
+  position: relative;
+  width: 168px;
+  height: 168px;
+  margin: auto 0 var(--sp-6);
+  border: none;
+  background: none;
+  cursor: pointer;
+  transform: scale(calc(1 + var(--level) * 0.22));
+  transition: transform 0.08s linear;
+}
+
+.voice-orb-core,
+.voice-orb-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.voice-orb-core {
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), rgba(255,255,255,0) 22%),
+    conic-gradient(from 0deg, #30D158, #64D2FF, #0A84FF, #5E5CE6, #64D2FF, #30D158);
+  box-shadow: inset -10px -14px 30px rgba(0,0,0,0.35), inset 6px 8px 20px rgba(255,255,255,0.25);
+  animation: orb-spin 9s linear infinite;
+}
+
+.voice-orb-glow {
+  background: radial-gradient(circle, rgba(100,210,255,0.55), rgba(10,132,255,0) 70%);
+  filter: blur(26px);
+  transform: scale(1.5);
+  z-index: -1;
+  animation: orb-breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes orb-spin { to { transform: rotate(360deg); } }
+@keyframes orb-breathe { 0%, 100% { opacity: 0.55; transform: scale(1.4); } 50% { opacity: 0.9; transform: scale(1.6); } }
+@keyframes orb-think { 0%, 100% { transform: scale(0.94); } 50% { transform: scale(1.02); } }
+@keyframes orb-talk { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.06); } 50% { transform: scale(0.98); } 75% { transform: scale(1.04); } }
+
+.voice-orb.preparing .voice-orb-core,
+.voice-orb.transcribing .voice-orb-core { filter: saturate(0.5) brightness(0.8); }
+.voice-orb.thinking { animation: orb-think 1.4s ease-in-out infinite; }
+.voice-orb.speaking { animation: orb-talk 0.9s ease-in-out infinite; }
+.voice-orb.paused .voice-orb-core,
+.voice-orb.error .voice-orb-core { filter: grayscale(0.7) brightness(0.7); animation-play-state: paused; }
+
+.voice-status {
+  font-size: var(--headline);
+  font-weight: 600;
+  text-align: center;
+  min-height: 22px;
+}
+
+.voice-caption {
+  margin-top: var(--sp-2);
+  font-size: var(--subheadline);
+  line-height: 20px;
+  color: var(--label-2);
+  text-align: center;
+  max-height: 100px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+
+.voice-controls { margin-top: auto; padding-top: var(--sp-6); }
+
+.voice-end-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 50px;
+  padding: 0 28px;
+  border: none;
+  border-radius: var(--r-capsule);
+  background: rgba(255,69,58,0.9);
+  color: #fff;
+  font-size: var(--headline);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.35), 0 8px 20px rgba(255,69,58,0.3);
+}
+
+/* The status bar and Dynamic Island stay on top of every overlay, as on iPhone */
+.status-bar { z-index: 600; }
+.dynamic-island, .home-indicator { z-index: 610; }
