@@ -941,7 +941,12 @@ function App() {
         <div className="screen">
           <ScreenHeader
             title="Charity"
-            leading={<span className="screen-greeting">Good evening</span>}
+            leading={
+              <span className="screen-greeting-row">
+                <HearthCharacter size={40} state="curious" />
+                <span className="screen-greeting">Good evening</span>
+              </span>
+            }
             trailing={
               <div
                 className="glass-icon-btn"

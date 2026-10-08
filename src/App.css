@@ -1541,3 +1541,37 @@ button, input { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .hearth-buddy .hb-body, .hearth-buddy .hb-eye, .hearth-buddy .hb-eyes { animation: none !important; }
 }
+
+/* ---------- CHARACTER: curious glance ----------
+   The eyes glance right, left, up and down, with a blink between,
+   like a character checking on the home. Used on the dashboard and
+   while listening in voice mode. */
+.screen-greeting-row { display: inline-flex; align-items: center; gap: var(--sp-2); margin-left: -4px; }
+
+@keyframes hb-glance {
+  0%, 10%   { transform: translate(0, 0); }
+  14%, 26%  { transform: translate(7px, 0); }
+  30%, 34%  { transform: translate(0, 0); }
+  38%, 50%  { transform: translate(-7px, 0); }
+  54%, 58%  { transform: translate(0, 0); }
+  62%, 72%  { transform: translate(0, -6px); }
+  76%, 86%  { transform: translate(0, 5px); }
+  90%, 100% { transform: translate(0, 0); }
+}
+
+/* blinks land on the moments the eyes return to centre */
+@keyframes hb-glance-blink {
+  0%, 30%, 33%, 55%, 58%, 89%, 92%, 100% { transform: scaleY(1); }
+  31.5%, 56.5%, 90.5% { transform: scaleY(0.12); }
+}
+
+.hearth-buddy.curious .hb-eyes,
+.hearth-buddy.listening .hb-eyes {
+  animation: hb-glance 7s ease-in-out infinite;
+}
+
+.hearth-buddy.curious .hb-eye,
+.hearth-buddy.listening .hb-eye {
+  animation: hb-glance-blink 7s infinite;
+  transform: none;
+}
