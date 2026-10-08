@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
 
-const BG_IMAGE =
-  "https://images.unsplash.com/photo-1542224566-6e85f2e6772f?fm=jpg&q=80&w=1080&auto=format&fit=crop";
+// Background: an ambient colour field that reflects the home's privacy zone (see .app.zone-* in App.css)
 
 const categories = {
   security: { label: "Security", color: "#FF453A", bg: "rgba(255,69,58,0.2)" },
@@ -1239,7 +1238,7 @@ function App() {
 
   return (
     <div className="phone-frame">
-      <div className="app" style={{ backgroundImage: `url(${BG_IMAGE})` }}>
+      <div className={`app zone-${currentZone}`}>
         <StatusBar />
         <div className="dynamic-island" aria-hidden="true"></div>
         <div className="content" ref={contentRef}>
