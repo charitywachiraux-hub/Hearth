@@ -303,13 +303,14 @@ const zoneStates = {
 
 // One header for every tab, like an iOS navigation bar with a large title:
 // a 44pt toolbar row (leading and trailing slots), then the title, then a subtitle.
-function ScreenHeader({ title, subtitle, leading, trailing }) {
+function ScreenHeader({ title, subtitle, leading, trailing, hero, eyebrow }) {
   return (
     <header className="screen-header">
-      <div className="screen-toolbar">
-        <div className="screen-toolbar-leading">{leading}</div>
+      <div className={`screen-toolbar ${hero ? "has-hero" : ""}`}>
+        <div className="screen-toolbar-leading">{hero || leading}</div>
         <div className="screen-toolbar-trailing">{trailing}</div>
       </div>
+      {eyebrow && <p className="screen-eyebrow">{eyebrow}</p>}
       <h1 className="screen-title">{title}</h1>
       {subtitle && <p className="screen-subtitle">{subtitle}</p>}
     </header>
@@ -941,12 +942,12 @@ function App() {
         <div className="screen">
           <ScreenHeader
             title="Charity"
-            leading={
-              <span className="screen-greeting-row">
-                <HearthCharacter size={40} state="curious" />
-                <span className="screen-greeting">Good evening</span>
+            hero={
+              <span className="hero-buddy">
+                <HearthCharacter size={68} state="curious" />
               </span>
             }
+            eyebrow="Good evening"
             trailing={
               <div
                 className="glass-icon-btn"

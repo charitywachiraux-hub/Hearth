@@ -1575,3 +1575,32 @@ button, input { font-family: inherit; }
   animation: hb-glance-blink 7s infinite;
   transform: none;
 }
+
+/* ---------- DASHBOARD HERO CHARACTER ----------
+   The cloud sits on its own above the greeting, large enough to read
+   its expressions. On launch it pops in with a small bounce, then
+   starts glancing around. */
+.screen-toolbar.has-hero { height: auto; align-items: flex-start; margin-top: var(--sp-2); }
+
+.hero-buddy {
+  display: inline-block;
+  margin-left: -6px;
+  animation: hero-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
+}
+
+@keyframes hero-pop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.6); }
+  60% { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.screen-eyebrow {
+  font-size: var(--subheadline);
+  line-height: 20px;
+  color: var(--label-2);
+  margin-top: var(--sp-2);
+}
+
+.screen-eyebrow + .screen-title { margin-top: 0; }
+
+@media (prefers-reduced-motion: reduce) { .hero-buddy { animation: none; } }
