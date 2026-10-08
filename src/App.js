@@ -306,10 +306,11 @@ const zoneStates = {
 function ScreenHeader({ title, subtitle, leading, trailing, hero, eyebrow }) {
   return (
     <header className="screen-header">
-      <div className={`screen-toolbar ${hero ? "has-hero" : ""}`}>
-        <div className="screen-toolbar-leading">{hero || leading}</div>
+      <div className="screen-toolbar">
+        <div className="screen-toolbar-leading">{leading}</div>
         <div className="screen-toolbar-trailing">{trailing}</div>
       </div>
+      {hero && <div className="screen-hero">{hero}</div>}
       {eyebrow && <p className="screen-eyebrow">{eyebrow}</p>}
       <h1 className="screen-title">{title}</h1>
       {subtitle && <p className="screen-subtitle">{subtitle}</p>}
@@ -944,7 +945,7 @@ function App() {
             title="Charity"
             hero={
               <span className="hero-buddy">
-                <HearthCharacter size={68} state="curious" />
+                <HearthCharacter size={80} state="curious" />
               </span>
             }
             eyebrow="Good evening"

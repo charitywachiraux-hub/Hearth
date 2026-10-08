@@ -1604,3 +1604,10 @@ button, input { font-family: inherit; }
 .screen-eyebrow + .screen-title { margin-top: 0; }
 
 @media (prefers-reduced-motion: reduce) { .hero-buddy { animation: none; } }
+
+/* Hero row: the cloud sits under the settings button with a 16pt gap.
+   The cloud drawing has about 11px of air above it inside its 80px box,
+   so 6px of margin gives about 16px of visible space (it floats by 1 to 2px). Pulled left so its
+   edge lines up with the text. */
+.screen-hero { margin-top: 6px; margin-left: -10px; line-height: 0; }
+.screen-hero .hero-buddy { margin-left: 0; }
